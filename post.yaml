@@ -1,0 +1,71 @@
+--- 
+- 
+  become: true
+  hosts: localhost
+  name: "fedora post install"
+  tasks: 
+    - 
+      name: "update all"
+      yum: 
+        name: "*"
+        state: latest
+    - 
+      name: "install packages"
+      yum: 
+        name: 
+          - zsh
+          - tmux
+          - vim
+        state: latest
+    - 
+      name: "install vscode repo"
+      template: 
+        dest: /etc/yum.repos.d/vscode.repo
+        src: ./vscode.repo
+    - 
+      name: "install vscode"
+      yum: 
+        name: code
+        state: latest
+    - 
+      get_url: 
+        dest: /tmp/ohmyzsh.sh
+        mode: 777
+        url: "https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh"
+      name: "download ohmyzsh"
+    - 
+      command: "bash /tmp/ohmyzsh.sh"
+      name: "install ohmyzsh"
+    - 
+      name: "install rawride free repo"
+      template: 
+        dest: /etc/yum.repos.d/rpmfusion-free.repo
+        src: ./rpmfusion-free.repo
+    - 
+      name: "install rawride free updates repo"
+      template: 
+        dest: /etc/yum.repos.d/rpmfusion-free-updates.repo
+        src: ./rpmfusion-free-updates.repo
+    - 
+      name: "install rawride non free updates repo"
+      template: 
+        dest: /etc/yum.repos.d/rpmfusion-nonfree-updates.repo
+        src: ./rpmfusion-nonfree-updates.repo
+    - 
+      name: "install rawride non free repo"
+      template: 
+        dest: /etc/yum.repos.d/rpmfusion-nonfree.repo
+        src: ./rpmfusion-nonfree.repo
+    - 
+      name: "install nvidia drivers"
+      yum: 
+        name: 
+          - xorg-x11-drv-nvidia
+          - akmod-nvidia
+        state: latest
+    - 
+      debug: 
+        msg: "{{ ansible_user }}"
+      name: debug
+      tags: debug
+  vars: ~
